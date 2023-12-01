@@ -1,84 +1,50 @@
 package day1
 
-import java.io.File
-import java.io.InputStream
+import readInput
 
 fun main(args: Array<String>) {
-    val path = {}.javaClass.classLoader.getResource("day1.txt")?.path ?: throw Exception("File not found")
+    val lines = readInput("day1/input")
     print("First: ")
-    first(path)
+    first(lines)
 
     print("Second: ")
-    second(path)
+    second(lines)
 }
 
-val numbersAsText = arrayOf(
-    "one",
-    "two",
-    "three",
-    "four",
-    "five",
-    "six",
-    "seven",
-    "eight",
-    "nine"
+val numbersAsText = mapOf(
+    "0" to 0,
+    "1" to 1,
+    "2" to 2,
+    "3" to 3,
+    "4" to 4,
+    "5" to 5,
+    "6" to 6,
+    "7" to 7,
+    "8" to 8,
+    "9" to 9,
+    "one" to 1,
+    "two" to 2,
+    "three" to 3,
+    "four" to 4,
+    "five" to 5,
+    "six" to 6,
+    "seven" to 7,
+    "eight" to 8,
+    "nine" to 9
 )
 
-fun first(path: String) {
-    val inputStream: InputStream = File(path).inputStream()
-    var calibrationCode = 0
-
-    inputStream.bufferedReader().forEachLine { line ->
-        val lineValue = "${line.first { it.isDigit() }}${line.last { it.isDigit() }}".toInt()
-        calibrationCode += lineValue
+fun first(lines: List<String>) {
+    val calibrationCode = lines.sumOf { line ->
+        "${line.first { it.isDigit() }}${line.last { it.isDigit() }}".toInt()
     }
     println("The calibration code is: $calibrationCode")
 }
 
-fun second(path: String) {
-    val inputStream: InputStream = File(path).inputStream()
-    var calibrationCode = 0
-
-    inputStream.bufferedReader().forEachLine { line ->
-        firstNumber(line)
-
-        val lineValue = "${firstNumber(line)}${lastNumber(line)}".toInt()
-
-        calibrationCode += lineValue
+fun second(lines: List<String>) {
+    val calibrationCode = lines.sumOf { line ->
+        val firstDigit = line.findAnyOf(numbersAsText.keys)?.second ?: "0"
+        val secondDigit = line.findLastAnyOf(numbersAsText.keys)?.second ?: "0"
+        "${numbersAsText[firstDigit]}${numbersAsText[secondDigit]}".toInt()
     }
     println("The calibration code is: $calibrationCode")
-}
-
-private fun firstNumber(line: String): Int {
-    val firstDigit = line.first { it.isDigit() }
-    val firstDigits = numbersAsText.mapIndexed { index, number ->
-        val indexOfNumber = line.indexOf(number)
-        if (indexOfNumber >= 0) {
-            Pair(indexOfNumber, index + 1)
-        } else {
-            null
-        }
-    }.toMutableList()
-
-    firstDigits.add(
-        Pair(line.indexOfFirst { it == firstDigit }, firstDigit.digitToInt())
-    )
-    return firstDigits.filterNotNull().minBy { it.first }.second
-}
-
-private fun lastNumber(line: String): Int {
-    val lastDigit = line.last { it.isDigit() }
-    val lastDigits = numbersAsText.mapIndexed { index, number ->
-        val indexOfNumber = line.lastIndexOf(number)
-        if (indexOfNumber >= 0) {
-            Pair(indexOfNumber, index + 1)
-        } else {
-            null
-        }
-    }.toMutableList()
-
-    lastDigits.add(
-        Pair(line.indexOfLast { it == lastDigit }, lastDigit.digitToInt())
-    )
-    return lastDigits.filterNotNull().maxBy { it.first }.second
 }

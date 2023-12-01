@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm") version "1.9.20"
-    application
 }
 
 group = "dev.ytterdal"
@@ -20,8 +19,4 @@ tasks.test {
 
 kotlin {
     jvmToolchain(8)
-}
-
-application {
-    mainClass.set("MainKt")
 }
