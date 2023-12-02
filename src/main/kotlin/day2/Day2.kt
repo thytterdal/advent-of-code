@@ -23,18 +23,11 @@ fun first(lines: List<String>) {
 
         gameInput.split(";").forEach { round ->
             round.split(",").forEach {
-                when {
-                    it.endsWith("red") -> {
-                        if (it.replace("red", "").trim().toInt() > MAX_RED) isValid = false
-                    }
-
-                    it.endsWith("green") -> {
-                        if (it.replace("green", "").trim().toInt() > MAX_GREEN) isValid = false
-                    }
-
-                    it.endsWith("blue") -> {
-                        if (it.replace("blue", "").trim().toInt() > MAX_BLUE) isValid = false
-                    }
+                val (number, color) = it.trim().split(" ")
+                when (color) {
+                    "red" -> if (number.toInt() > MAX_RED) isValid = false
+                    "green" -> if (number.toInt() > MAX_GREEN) isValid = false
+                    "blue" -> if (number.toInt() > MAX_BLUE) isValid = false
                 }
             }
         }
@@ -55,18 +48,11 @@ fun second(lines: List<String>) {
 
         gameInput.split(";").forEach { round ->
             round.split(",").forEach {
-                when {
-                    it.endsWith("red") -> {
-                        red = max(it.replace("red", "").trim().toInt(), red)
-                    }
-
-                    it.endsWith("green") -> {
-                        green = max(it.replace("green", "").trim().toInt(), green)
-                    }
-
-                    it.endsWith("blue") -> {
-                        blue = max(it.replace("blue", "").trim().toInt(), blue)
-                    }
+                val (number, color) = it.trim().split(" ")
+                when (color) {
+                    "red" -> red = max(number.toInt(), red)
+                    "green" -> green = max(number.toInt(), green)
+                    "blue" -> blue = max(number.toInt(), blue)
                 }
             }
         }
