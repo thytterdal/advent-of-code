@@ -3,16 +3,16 @@ package day2
 import readInput
 import kotlin.math.max
 
+private const val MAX_RED = 12
+private const val MAX_GREEN = 13
+private const val MAX_BLUE = 14
+
 fun main() {
     val lines = readInput("day2/input")
 
     first(lines)
     second(lines)
 }
-
-private const val MAX_RED = 12
-private const val MAX_GREEN = 13
-private const val MAX_BLUE = 14
 
 fun first(lines: List<String>) {
     val sum = lines.sumOf { line ->
