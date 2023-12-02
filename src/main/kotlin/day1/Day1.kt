@@ -2,7 +2,7 @@ package day1
 
 import readInput
 
-fun main(args: Array<String>) {
+fun main() {
     val lines = readInput("day1/input")
     print("First: ")
     first(lines)
