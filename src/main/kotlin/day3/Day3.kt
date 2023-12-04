@@ -10,7 +10,7 @@ fun main() {
 }
 
 fun first(lines: List<String>) {
-    val numbers = mutableListOf<Int>()
+    val numbers = mutableListOf<Long>()
 
     for (i in 0..lines.lastIndex) {
         val (previousLine, currentLine, nextLine) = findNumbersAndSymbols(lines, i)
@@ -32,13 +32,13 @@ fun first(lines: List<String>) {
 }
 
 fun second(lines: List<String>) {
-    val numbers = mutableListOf<Int>()
+    val numbers = mutableListOf<Long>()
 
     for (i in 0..lines.lastIndex) {
         val (previousLine, currentLine, nextLine) = findNumbersAndSymbols(lines, i)
 
         currentLine.filterIsInstance<SchematicItem.Symbol>().filter { it.symbol == "*" }.forEach { symbol ->
-            val tempNumbers = mutableListOf<Int>()
+            val tempNumbers = mutableListOf<Long>()
 
             findNeighbours(
                 symbol = symbol,
@@ -63,7 +63,7 @@ private fun findNeighbours(
     previousLine: List<SchematicItem.PartNumber>,
     currentLine: List<SchematicItem.PartNumber>,
     nextLine: List<SchematicItem.PartNumber>,
-    list: MutableList<Int>
+    list: MutableList<Long>
 ) {
     previousLine.forEach { previous ->
         if (previous.range.contains(symbol.index)) {
@@ -96,9 +96,11 @@ private fun findNumbersAndSymbols(
 fun String.findNumbersOnLine(): List<SchematicItem.PartNumber> {
     val regex = Regex("""\d+""")
     val numbers = regex.findAll(this).map {
-        val range = it.range.first - 1..it.range.last + 1
+        val rangeStart = (it.range.first -1).coerceAtLeast(0)
+        val rangeEnd = if(it.range.last == this.lastIndex) it.range.last else it.range.last + 1
+        val range = rangeStart..rangeEnd
         SchematicItem.PartNumber(
-            value = it.value.toInt(),
+            value = it.value.toLong(),
             range = range
         )
     }.toList()
@@ -112,9 +114,11 @@ fun String.findNumbersAndSymbolsOnLine(): List<SchematicItem> {
         val isNumber = it.value.toIntOrNull() != null
 
         if (isNumber) {
+            val rangeStart = (it.range.first -1).coerceAtLeast(0)
+            val rangeEnd = if(it.range.last == this.lastIndex) it.range.last else it.range.last + 1
             SchematicItem.PartNumber(
-                value = it.value.toInt(),
-                range = it.range.first - 1..it.range.last + 1
+                value = it.value.toLong(),
+                range = rangeStart..rangeEnd
             )
         } else {
             SchematicItem.Symbol(
@@ -129,7 +133,7 @@ fun String.findNumbersAndSymbolsOnLine(): List<SchematicItem> {
 
 sealed interface SchematicItem {
     data class PartNumber(
-        val value: Int,
+        val value: Long,
         val range: IntRange
     ) : SchematicItem
 
