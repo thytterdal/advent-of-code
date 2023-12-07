@@ -57,14 +57,14 @@ data class CamelPokerHand(
         } else tmpOccurrences
 
         return when {
-            occurrences.maxOf { it.value } == 5 -> HandType.FiveOfAKind
-            occurrences.maxOf { it.value } == 4 -> HandType.FourOfAKind
-            occurrences.maxOf { it.value } == 3 && occurrences.values.contains(2) -> HandType.FullHouse
-            occurrences.maxOf { it.value } == 3 -> HandType.ThreeOfAKind
-            occurrences.values.count { it == 2 } == 2 -> HandType.TwoPair
-            occurrences.values.contains(2) -> HandType.OnePair
+            occurrences.maxOf { it.value } == 5 -> HandType.FIVE_OF_A_KIND
+            occurrences.maxOf { it.value } == 4 -> HandType.FOUR_OF_A_KIND
+            occurrences.maxOf { it.value } == 3 && occurrences.values.contains(2) -> HandType.FULL_HOUSE
+            occurrences.maxOf { it.value } == 3 -> HandType.THREE_OF_A_KIND
+            occurrences.values.count { it == 2 } == 2 -> HandType.TWO_PAIR
+            occurrences.values.contains(2) -> HandType.ONE_PAIR
 
-            else -> HandType.HighCard
+            else -> HandType.HIGH_CARD
         }
     }
 
@@ -83,10 +83,7 @@ data class CamelPokerHand(
         }
         return 0
     }
-
-
 }
-
 
 private fun String.toCardValueList(joker: Boolean): List<Int> {
     return this.toCharArray().map {
@@ -101,42 +98,13 @@ private fun String.toCardValueList(joker: Boolean): List<Int> {
     }
 }
 
-sealed interface HandType {
-    val rank: Int
 
-    data object FiveOfAKind : HandType {
-        override val rank: Int
-            get() = 7
-    }
-
-    data object FourOfAKind : HandType {
-        override val rank: Int
-            get() = 6
-    }
-
-    data object FullHouse : HandType {
-        override val rank: Int
-            get() = 5
-    }
-
-    data object ThreeOfAKind : HandType {
-        override val rank: Int
-            get() = 4
-    }
-
-    data object TwoPair : HandType {
-        override val rank: Int
-            get() = 3
-    }
-
-    data object OnePair : HandType {
-        override val rank: Int
-            get() = 2
-    }
-
-    data object HighCard : HandType {
-        override val rank: Int
-            get() = 1
-    }
+enum class HandType(val rank: Int) {
+    FIVE_OF_A_KIND(7),
+    FOUR_OF_A_KIND(6),
+    FULL_HOUSE(5),
+    THREE_OF_A_KIND(4),
+    TWO_PAIR(3),
+    ONE_PAIR(2),
+    HIGH_CARD(1)
 }
-
