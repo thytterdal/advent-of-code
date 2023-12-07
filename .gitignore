@@ -40,3 +40,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### Advent of code input ###
+input.txt
+test_input.txt
