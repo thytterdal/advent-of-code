@@ -12,13 +12,52 @@ fun main() {
 fun firstStar(lines: List<String>) {
     val nodeMap = parseInput(lines)
     val directions = lines.first()
-    var steps = 0
-    var lastNode = "AAA"
 
-    while (lastNode != "ZZZ") {
+    val steps = nodeMap.findNumberOfSteps("AAA", directions) {
+        it == "ZZZ"
+    }
 
-        val direction = directions[steps % directions.length]
-        val node = nodeMap[lastNode]
+    println("First  ⭐: $steps")
+}
+
+fun secondStar(lines: List<String>) {
+    val nodeMap = parseInput(lines)
+    val directions = lines.first()
+
+    val totalSteps = nodeMap.keys
+        .filter { it.endsWith('A') }
+        .fold(1L) { acc, startNode ->
+            leastCommonMultiple(
+                acc,
+                nodeMap.findNumberOfSteps(startNode, directions) {
+                    it.endsWith('Z')
+                }
+            )
+        }
+
+    println("Second ⭐: $totalSteps")
+}
+
+fun parseInput(lines: List<String>): Map<String, Node> {
+    val regex = """[A-Z]{3}""".toRegex()
+    val nodeLines = lines.drop(1).filterNot { it.isBlank() }
+    return nodeLines.associate { line ->
+        val (key, left, right) = regex.findAll(line).map { it.value }.toList()
+        key to Node(left = left, right = right)
+    }
+}
+
+fun Map<String, Node>.findNumberOfSteps(
+    startNode: String,
+    directions: String,
+    endCondition: (String) -> Boolean
+): Long {
+    var steps = 0L
+    var lastNode = startNode
+
+    while (!endCondition(lastNode)) {
+        val direction = directions[(steps % directions.length).toInt()]
+        val node = this[lastNode]
 
         lastNode = if (direction == 'R') {
             node?.right ?: throw Exception("Node not found")
@@ -29,48 +68,7 @@ fun firstStar(lines: List<String>) {
         steps++
     }
 
-    println("First star: $steps")
-}
-
-fun secondStar(lines: List<String>) {
-    val nodeMap = parseInput(lines)
-    val directions = lines.first()
-    var steps = 0L
-    var nodes = nodeMap.keys.filter { it.endsWith('A') }
-    val stepMap = mutableMapOf<String, Long>()
-
-    while (nodes.isNotEmpty()) {
-        val direction = directions[(steps % directions.length).toInt()]
-        nodes = nodes.mapNotNull { lastNode ->
-            val node = nodeMap[lastNode]
-            val nextNode = if (direction == 'R') {
-                node?.right ?: throw Exception("Node not found")
-            } else {
-                node?.left ?: throw Exception("Node not found")
-            }
-            if (nextNode.endsWith('Z')) {
-                stepMap[nextNode] = steps + 1
-                null
-            } else nextNode
-        }
-
-        steps++
-    }
-
-    val totalSteps = stepMap.values.fold(1L) { acc, stepCount -> leastCommonMultiple(acc, stepCount)}
-    println(totalSteps)
-}
-
-fun parseInput(lines: List<String>): Map<String, Node> {
-    val nodeLines = lines.drop(1).filterNot { it.isBlank() }
-    return nodeLines.associate { line ->
-        val (key, left, right) = line
-            .replace("(", "")
-            .replace(")", "")
-            .split("=", ",")
-
-        key.trim() to Node(left = left.trim(), right = right.trim())
-    }
+    return steps
 }
 
 fun leastCommonMultiple(n1: Long, n2: Long): Long {
