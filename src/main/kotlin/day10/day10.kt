@@ -7,23 +7,20 @@ import utils.pointInPolygon
 
 fun main() {
     val lines = readInput("day10/input")
-
-    firstStar(lines)
-    secondStar(lines)
-}
-
-private fun firstStar(lines: List<String>) {
     val map = lines.toMap()
     val path = findPath(map, lines.findStartPosition())
 
+    firstStar(path)
+    secondStar(map, path)
+}
+
+private fun firstStar(path: Array<Point>) {
     val maxDistance = path.size / 2
 
     println("First  ⭐: $maxDistance")
 }
 
-private fun secondStar(lines: List<String>) {
-    val map = lines.toMap()
-    val path = findPath(map, lines.findStartPosition())
+private fun secondStar(map: Array<Array<Char>>, path: Array<Point>) {
     var sum = 0L
 
     map.forEachIndexed { row, line ->
@@ -80,11 +77,11 @@ private fun findPath(map: Array<Array<Char>>, startPosition: Point): Array<Point
 }
 
 private fun Array<Array<Char>>.findInitialDirection(position: Point): Point {
-    return position + when{
+    return position + when {
         position.x > 0 && this[position.y][position.x - 1] in listOf('F', 'L', '-') -> Direction.Left
         position.x < this.first().size && this[position.y][position.x + 1] in listOf('7', 'J', '-') -> Direction.Right
-        position.y > 0 && this[position.y -1][position.x] in listOf('|', 'F', '7') -> Direction.Up
-        position.y < this.size && this[position.y +1][position.x] in listOf('L', 'J', '|') -> Direction.Down
+        position.y > 0 && this[position.y - 1][position.x] in listOf('|', 'F', '7') -> Direction.Up
+        position.y < this.size && this[position.y + 1][position.x] in listOf('L', 'J', '|') -> Direction.Down
         else -> throw Exception("No path found")
     }
 }
