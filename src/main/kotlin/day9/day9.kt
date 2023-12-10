@@ -1,6 +1,6 @@
 package day9
 
-import readInput
+import utils.readInput
 
 fun main() {
     val lines = readInput("day9/input")

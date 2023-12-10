@@ -1,7 +1,7 @@
 package day5
 
-import binarySearch
-import readInput
+import utils.binarySearch
+import utils.readInput
 import kotlin.math.min
 
 fun main() {

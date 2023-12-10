@@ -1,6 +1,6 @@
 package day2
 
-import readInput
+import utils.readInput
 import kotlin.math.max
 
 private const val MAX_RED = 12
