@@ -1,9 +1,9 @@
 package day10
 
+import utils.Direction
 import utils.readInput
 import utils.Point
 import utils.pointInPolygon
-import kotlin.math.ceil
 
 fun main() {
     val lines = readInput("day10/input")
@@ -13,22 +13,23 @@ fun main() {
 }
 
 private fun firstStar(lines: List<String>) {
-    val loop = findMainLoop(lines)
+    val map = lines.toMap()
+    val path = findPath(map, lines.findStartPosition())
 
-    val maxDistance = ceil((loop.keys.max() + 1) / 2f)
+    val maxDistance = path.size / 2
 
     println("First  ⭐: $maxDistance")
 }
 
 private fun secondStar(lines: List<String>) {
     val map = lines.toMap()
-    val loop = findMainLoop(lines).values.toTypedArray()
+    val path = findPath(map, lines.findStartPosition())
     var sum = 0L
 
     map.forEachIndexed { row, line ->
         line.forEachIndexed { column, _ ->
             val point = Point(x = column, y = row)
-            if (!loop.contains(point) && loop.pointInPolygon(point)) {
+            if (!path.contains(point) && path.pointInPolygon(point)) {
                 sum++
             }
         }
@@ -40,78 +41,50 @@ private fun secondStar(lines: List<String>) {
 private fun List<String>.toMap() =
     this.filter { it.isNotBlank() }.map { line -> line.toCharArray().toTypedArray() }.toTypedArray()
 
-private fun findMainLoop(lines: List<String>): Map<Int, Point> {
-    var currentPosition = Point(0, 0)
-    val map = lines
-        .filter { it.isNotBlank() }
-        .mapIndexed { index, line ->
-            if (line.contains("S")) currentPosition = Point(line.indexOf('S'), index)
-            line.toCharArray().toTypedArray()
-        }.toTypedArray()
+private fun List<String>.findStartPosition(): Point {
+    val row = this.indexOfFirst { it.contains('S') }
+    val column = this[row].indexOf('S')
+    return Point(x = column, y = row)
+}
 
-    val loop = mutableMapOf(
-        0 to currentPosition
+private fun findPath(map: Array<Array<Char>>, startPosition: Point): Array<Point> {
+    var currentPosition = startPosition
+
+    val path = mutableListOf(
+        currentPosition
     )
 
-    var nextPosition = map.findStartPosition(currentPosition)
+    var nextPosition = map.findInitialDirection(currentPosition)
     var nextChar = map[nextPosition.x][nextPosition.y]
 
     while (nextChar != 'S') {
-        val positionDifference =
-            Point(
-                x = (currentPosition.x + 1) - (nextPosition.x + 1),
-                y = (currentPosition.y + 1) - (nextPosition.y + 1)
-            )
+        val xDifference = (currentPosition.x + 1) - (nextPosition.x + 1)
+        val yDifference = (currentPosition.y + 1) - (nextPosition.y + 1)
+
         currentPosition = nextPosition
 
-        nextPosition = when (nextChar) {
-            'J' -> Point(
-                x = if (positionDifference.x == 0) currentPosition.x - 1 else currentPosition.x,
-                y = if (positionDifference.y == 0) currentPosition.y - 1 else currentPosition.y
-            )
-
-            'F' -> Point(
-                x = if (positionDifference.x == 0) currentPosition.x + 1 else currentPosition.x,
-                y = if (positionDifference.y == 0) currentPosition.y + 1 else currentPosition.y
-            )
-
-            '-' -> Point(
-                x = currentPosition.x - positionDifference.x,
-                y = currentPosition.y
-            )
-
-            '|' -> Point(
-                x = currentPosition.x,
-                y = currentPosition.y - positionDifference.y
-            )
-
-            'L' -> Point(
-                x = if (positionDifference.x == 0) currentPosition.x + 1 else currentPosition.x,
-                y = if (positionDifference.y == 0) currentPosition.y - 1 else currentPosition.y
-            )
-
-            '7' -> Point(
-                x = if (positionDifference.x == 0) currentPosition.x - 1 else currentPosition.x,
-                y = if (positionDifference.y == 0) currentPosition.y + 1 else currentPosition.y
-            )
-
+        nextPosition = currentPosition + when (nextChar) {
+            'J' -> if (xDifference == 0) Direction.Left else Direction.Up
+            'F' -> if (xDifference == 0) Direction.Right else Direction.Down
+            'L' -> if (xDifference == 0) Direction.Right else Direction.Up
+            '7' -> if (xDifference == 0) Direction.Left else Direction.Down
+            '-' -> if (xDifference > 0) Direction.Left else Direction.Right
+            '|' -> if (yDifference > 0) Direction.Up else Direction.Down
             else -> throw Exception("No path found $nextChar")
         }
-        loop[loop.keys.max() + 1] = currentPosition
+        path.add(currentPosition)
         nextChar = map[nextPosition.y][nextPosition.x]
     }
 
-    return loop
+    return path.toTypedArray()
 }
 
-private fun Array<Array<Char>>.findStartPosition(position: Point): Point {
-    return when {
-        this[position.y][position.x - 1] == 'F' -> Point(x = position.x - 1, y = position.y)
-        this[position.y - 1][position.x] == 'F' -> Point(x = position.x - 1, y = position.y)
-        this[position.y + 1][position.x] == 'J' -> Point(x = position.x + 1, y = position.y)
-        this[position.y][position.x + 1] == 'F' -> Point(x = position.x, y = position.y + 1)
-        this[position.y][position.x + 1] == 'J' -> Point(x = position.x, y = position.y + 1)
-        this[position.y - 1][position.x] == '7' -> Point(x = position.x - 1, y = position.y)
+private fun Array<Array<Char>>.findInitialDirection(position: Point): Point {
+    return position + when{
+        position.x > 0 && this[position.y][position.x - 1] in listOf('F', 'L', '-') -> Direction.Left
+        position.x < this.first().size && this[position.y][position.x + 1] in listOf('7', 'J', '-') -> Direction.Right
+        position.y > 0 && this[position.y -1][position.x] in listOf('|', 'F', '7') -> Direction.Up
+        position.y < this.size && this[position.y +1][position.x] in listOf('L', 'J', '|') -> Direction.Down
         else -> throw Exception("No path found")
     }
 }
