@@ -5,14 +5,18 @@ import kotlin.math.max
 import kotlin.math.min
 
 data class Point(
-    val x: Int,
-    val y: Int
+    val x: Long,
+    val y: Long
 ) {
     infix operator fun plus(direction: Direction): Point {
         return Point(
             x = direction.x + this.x,
             y = direction.y + this.y
         )
+    }
+
+    fun distanceTo(other: Point): Long {
+        return abs(other.x - this.x) + abs(other.y - this.y)
     }
 }
 
