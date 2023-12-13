@@ -9,5 +9,8 @@ inline fun <reified T> Array<Array<T>>.transpose(): Array<Array<T>> {
 }
 
 fun List<String>.splitOnEmpty(): List<List<String>> {
-    return this.joinToString("\n").split("\n\n").map { it.split("\n") }
+    return this
+        .joinToString("\n")
+        .split("\n\n")
+        .map { it.split("\n") }
 }
