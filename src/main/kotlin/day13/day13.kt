@@ -13,8 +13,11 @@ fun main() {
 
 private fun firstStar(lines: List<String>) {
     val sum = lines.splitOnEmpty().sumOf { line ->
-        (line.findReflection()) + line.map { it.toList() }.transpose().map { it.joinToString("") }
-            .findReflection() * 100
+        val vertical = line.map { it.toList() }.findReflection()
+        if(vertical > 0) return@sumOf vertical
+
+        val horizontal = line.map { it.toList() }.transpose().findReflection() * 100
+        horizontal
     }
 
     println("First  ⭐: $sum")
@@ -25,13 +28,15 @@ private fun secondStar(lines: List<String>) {
     println("Second ⭐: ")
 }
 
-private fun List<String>.findReflection(): Long {
-    for (string in this) {
-        repeat(string.length) {
-            val firstPart = string.substring(0, it + 1).reversed()
-            val secondPart = string.substring(it + 1, string.length)
-            val length = minOf(firstPart.length, secondPart.length)
-            if (firstPart.substring(0, length) == secondPart.substring(0, length)) return (it +1).toLong()
+private fun List<List<Char>>.findReflection(): Long {
+    repeat(first().size) { index ->
+        val firstPart = this.map { it.subList(0, index + 1).reversed() }
+        val secondPart = this.map { it.subList(index + 1, it.size) }
+        val length = minOf(firstPart.first().size, secondPart.first().size)
+        if (
+            length > 0 && firstPart.map { it.subList(0, length) } == secondPart.map { it.subList(0, length) }
+        ) {
+            return (index + 1).toLong()
         }
     }
     return 0L
