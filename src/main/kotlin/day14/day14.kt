@@ -2,6 +2,8 @@ package day14
 
 import utils.readInput
 
+typealias platform = List<List<Char>>
+
 fun main() {
     val lines = readInput("day14/input")
 
@@ -42,9 +44,9 @@ private fun tiltNorth(lines: List<String>): Long {
     return sum
 }
 
-private fun List<List<Char>>.findRepeatingCycles(): Pair<MutableList<List<List<Char>>>, Int> {
-    val results = mutableMapOf<List<List<Char>>, List<List<Char>>>()
-    val cycle = mutableListOf<List<List<Char>>>()
+private fun List<List<Char>>.findRepeatingCycles(): Pair<MutableList<platform>, Int> {
+    val results = mutableMapOf<platform, platform>()
+    val cycle = mutableListOf<platform>()
 
     var temp = this
     var index = 0
@@ -62,7 +64,7 @@ private fun List<List<Char>>.findRepeatingCycles(): Pair<MutableList<List<List<C
     return Pair(cycle, index - cycle.size)
 }
 
-private fun List<List<Char>>.doCycle(): List<List<Char>> {
+private fun platform.doCycle(): platform {
     return this
         .applyWeight(Direction.NORTH)
         .applyWeight(Direction.WEST)
@@ -70,7 +72,7 @@ private fun List<List<Char>>.doCycle(): List<List<Char>> {
         .applyWeight(Direction.EAST)
 }
 
-private fun List<List<Char>>.applyWeight(direction: Direction): List<List<Char>> {
+private fun platform.applyWeight(direction: Direction): platform {
 
     val rows = this.size
     val columns = this.first().size
