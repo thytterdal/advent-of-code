@@ -21,9 +21,9 @@ private fun firstStar(lines: List<String>) {
 }
 
 private fun secondStar(lines: List<String>) {
-    val map = buildMap<Int, MutableList<Pair<String, Long>>> {
+    val map = buildMap<Int, MutableMap<String, Long>> {
         repeat(256) {
-            this[it] = mutableListOf()
+            this[it] = mutableMapOf()
         }
     }
     val regex = """\d+""".toRegex()
@@ -39,21 +39,15 @@ private fun secondStar(lines: List<String>) {
 
         if (add) {
             val number = regex.find(step)?.value?.toLong() ?: throw Exception("Invalid number")
-            if (map[keyValue]?.any { it.first == key } == true) {
-                val index = map[keyValue]!!.indexOfFirst { it.first == key }
-                map[keyValue]?.removeAll { it.first == key }
-                map[keyValue]?.add(index, Pair(key, number))
-            } else {
-                map[keyValue]?.add(Pair(key, number))
-            }
+            map[keyValue]?.set(key, number)
         } else {
-            map[keyValue]?.removeAll { it.first == key }
+            map[keyValue]?.remove(key)
         }
     }
 
-    val sum = map.entries.sumOf { (boxKey, boxValue) ->
-        boxValue.foldIndexed(0L) { index, acc, pair ->
-            acc + (boxKey + 1) * (index + 1) * pair.second
+    val sum = map.entries.sumOf { (boxKey, box) ->
+        box.values.foldIndexed(0L) { index, acc, focalStrength ->
+            acc + (boxKey + 1) * (index + 1) * focalStrength
         }
     }
 
