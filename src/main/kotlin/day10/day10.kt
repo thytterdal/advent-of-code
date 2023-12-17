@@ -2,7 +2,7 @@ package day10
 
 import utils.Direction
 import utils.readInput
-import utils.Point
+import utils.PointL
 import utils.pointInPolygon
 
 fun main() {
@@ -14,18 +14,18 @@ fun main() {
     secondStar(map, path)
 }
 
-private fun firstStar(path: Array<Point>) {
+private fun firstStar(path: Array<PointL>) {
     val maxDistance = path.size / 2
 
     println("First  ⭐: $maxDistance")
 }
 
-private fun secondStar(map: Array<Array<Char>>, path: Array<Point>) {
+private fun secondStar(map: Array<Array<Char>>, path: Array<PointL>) {
     var sum = 0L
 
     map.forEachIndexed { row, line ->
         line.forEachIndexed { column, _ ->
-            val point = Point(x = column.toLong(), y = row.toLong())
+            val point = PointL(x = column.toLong(), y = row.toLong())
             if (!path.contains(point) && path.pointInPolygon(point)) {
                 sum++
             }
@@ -38,13 +38,13 @@ private fun secondStar(map: Array<Array<Char>>, path: Array<Point>) {
 private fun List<String>.toMap() =
     this.filter { it.isNotBlank() }.map { line -> line.toCharArray().toTypedArray() }.toTypedArray()
 
-private fun List<String>.findStartPosition(): Point {
+private fun List<String>.findStartPosition(): PointL {
     val row = this.indexOfFirst { it.contains('S') }
     val column = this[row].indexOf('S')
-    return Point(x = column.toLong(), y = row.toLong())
+    return PointL(x = column.toLong(), y = row.toLong())
 }
 
-private fun findPath(map: Array<Array<Char>>, startPosition: Point): Array<Point> {
+private fun findPath(map: Array<Array<Char>>, startPosition: PointL): Array<PointL> {
     var currentPosition = startPosition
 
     val path = mutableListOf(
@@ -76,7 +76,7 @@ private fun findPath(map: Array<Array<Char>>, startPosition: Point): Array<Point
     return path.toTypedArray()
 }
 
-private fun Array<Array<Char>>.findInitialDirection(position: Point): Point {
+private fun Array<Array<Char>>.findInitialDirection(position: PointL): PointL {
     return position + when {
         position.x > 0 && this[position.y.toInt()][position.x.toInt() - 1] in listOf('F', 'L', '-') -> Direction.Left
         position.x < this.first().size && this[position.y.toInt()][position.x.toInt() + 1] in listOf('7', 'J', '-') -> Direction.Right

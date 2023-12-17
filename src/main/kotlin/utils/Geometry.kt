@@ -4,23 +4,23 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-data class Point(
+data class PointL(
     val x: Long,
     val y: Long
 ) {
-    infix operator fun plus(direction: Direction): Point {
-        return Point(
+    infix operator fun plus(direction: Direction): PointL {
+        return PointL(
             x = direction.x + this.x,
             y = direction.y + this.y
         )
     }
 
-    fun distanceTo(other: Point): Long {
+    fun distanceTo(other: PointL): Long {
         return abs(other.x - this.x) + abs(other.y - this.y)
     }
 }
 
-fun Array<Point>.pointInPolygon(point: Point): Boolean {
+fun Array<PointL>.pointInPolygon(point: PointL): Boolean {
     val eps = 0.000001
     var crossings = 0
 

@@ -1,7 +1,7 @@
 package day16
 
 import utils.Direction
-import utils.Point
+import utils.PointL
 import utils.readInput
 
 fun main() {
@@ -29,7 +29,7 @@ private fun secondStar(lines: List<String>) {
 }
 
 private fun List<String>.traceBeam(x: Long, y: Long, initialDirection: Direction): Int {
-    val stack = mutableListOf(Point(x, y) to initialDirection)
+    val stack = mutableListOf(PointL(x, y) to initialDirection)
     val visited = stack.toMutableSet()
     while (true) {
         val (point, direction) = stack.removeLastOrNull() ?: break
