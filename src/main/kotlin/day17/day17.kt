@@ -72,7 +72,7 @@ private fun List<List<Int>>.neighbors(cityBlock: CityBlock, excludeCondition: (D
                 direction = direction,
                 straightBlocks = straightBlocks
             )
-            Graph.Edge(vertexPosition = nextCityBlock, weight = this[position.y][position.x])
+            Graph.Edge(vertexPosition = nextCityBlock, weight = this[position])
         }
 
 private data class CityBlock(

@@ -17,3 +17,7 @@ fun List<String>.toIntMatrix(): List<List<Int>> =
 fun <T> List<List<T>>.positionIsValid(point: Point): Boolean {
     return point.x in this.first().indices && point.y in this.indices
 }
+
+infix operator fun <T> List<List<T>>.get(point: Point): T {
+    return this[point.y][point.x]
+}
