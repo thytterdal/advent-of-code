@@ -20,6 +20,22 @@ data class PointL(
     }
 }
 
+data class Point(
+    val x: Int,
+    val y: Int
+) {
+    infix operator fun plus(direction: Direction): Point {
+        return Point(
+            x = direction.x + this.x,
+            y = direction.y + this.y
+        )
+    }
+
+    fun distanceTo(other: Point): Int {
+        return abs(other.x - this.x) + abs(other.y - this.y)
+    }
+}
+
 fun Array<PointL>.pointInPolygon(point: PointL): Boolean {
     val eps = 0.000001
     var crossings = 0
@@ -72,5 +88,14 @@ sealed interface Direction {
     data object Down : Direction {
         override val x = 0
         override val y = 1
+    }
+
+    fun isOpposite(other: Direction): Boolean {
+        return when(other) {
+            Down -> this == Up
+            Left -> this == Right
+            Right -> this == Left
+            Up -> this == Down
+        }
     }
 }
