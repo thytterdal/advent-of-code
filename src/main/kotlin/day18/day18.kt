@@ -1,65 +1,52 @@
 package day18
 
 import utils.*
-import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 fun main() {
     val lines = readInput("day18/input")
-
 
     firstStar(lines)
     secondStar(lines)
 }
 
 private fun firstStar(lines: List<String>) {
-    val digPlan = lines.parseDigPlan()
-
-    val start = Point(x = 0, y = 0)
-
-    val tempTunnel = mutableListOf(start)
-
-    digPlan.forEach {digInstruction ->
-        repeat(digInstruction.distance) {
-            tempTunnel.add(tempTunnel.last() + digInstruction.direction)
-        }
-    }
-
-    val minX = abs(tempTunnel.minOf { it.x })
-    val minY = abs(tempTunnel.minOf { it.y })
-
-    val tunnel = tempTunnel.map { point -> Point(x = point.x + minX, y = point.y + minY) }
-
-    val map = List(tunnel.maxOf { it.y + 1 }) {
-        List(tunnel.maxOf { it.x + 1}) {
-            '.'
-        }
-    }
-
-    var sum = digPlan.fold(0L) {acc, digInstruction ->
-        acc + digInstruction.distance
-    }
-
-    map.forEachIndexed { row, line ->
-        line.forEachIndexed { column, _ ->
-            val point = Point(x = column, y = row)
-            if (!tunnel.contains(point) && tunnel.pointInPolygon(point)) {
-                sum++
-            }
-        }
-    }
+    val sum = lines
+        .parseDigPlan()
+        .calculateLagoonSize()
 
     println("First  ⭐: $sum")
 }
 
 private fun secondStar(lines: List<String>) {
-    val sum = 0
+    val sum = lines
+        .parseDigPlanFromHexCode()
+        .calculateLagoonSize()
 
     println("Second ⭐: $sum")
 }
 
+private fun List<DigInstruction>.calculateLagoonSize(): Long {
+    val coordinates = this.runningFold(PointL(x = 0, y = 0)) { acc, digInstruction ->
+        acc.move(digInstruction.distance, digInstruction.direction)
+    }
+
+    val trench = this.sumOf { it.distance }
+
+    val area = coordinates
+        .zipWithNext()
+        .fold(0L) { acc, (firstPoint, secondPoint) ->
+            acc + firstPoint.x * secondPoint.y - secondPoint.x * firstPoint.y
+        }.absoluteValue / 2
+
+    val sum = area + trench / 2 + 1
+
+    return sum
+}
+
 private fun List<String>.parseDigPlan() =
     this.map { line ->
-        line.split(" ").let { (direction, distance, color) ->
+        line.split(" ").let { (direction, distance, _) ->
             DigInstruction(
                 direction = when (direction) {
                     "U" -> Direction.Up
@@ -68,15 +55,28 @@ private fun List<String>.parseDigPlan() =
                     "D" -> Direction.Down
                     else -> throw Exception("Unexpected input")
                 },
-                distance = distance.toInt(),
-                color = color.substringAfter("(").substringBefore(")")
+                distance = distance.toLong()
             )
         }
     }
 
+private fun List<String>.parseDigPlanFromHexCode() =
+    this.map { line ->
+        line.split(" ").let { (_, _, color) ->
+            DigInstruction(
+                direction = when (color.dropLast(1).last()) {
+                    '0' -> Direction.Right
+                    '1' -> Direction.Down
+                    '2' -> Direction.Left
+                    '3' -> Direction.Up
+                    else -> throw Exception("Unexpected input")
+                },
+                distance = color.drop(2).dropLast(2).toLong(16)
+            )
+        }
+    }
 
 private data class DigInstruction(
     val direction: Direction,
-    val distance: Int,
-    val color: String
+    val distance: Long
 )
