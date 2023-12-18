@@ -15,6 +15,13 @@ data class PointL(
         )
     }
 
+    fun move(times: Long, direction: Direction): PointL {
+        return PointL(
+            x = (direction.x * times)+ this.x,
+            y = (direction.y * times) + this.y
+        )
+    }
+
     fun distanceTo(other: PointL): Long {
         return abs(other.x - this.x) + abs(other.y - this.y)
     }
@@ -31,12 +38,49 @@ data class Point(
         )
     }
 
+    fun move(times: Int, direction: Direction): Point {
+        return Point(
+            x = (direction.x * times)+ this.x,
+            y = (direction.y * times) + this.y
+        )
+    }
+
     fun distanceTo(other: Point): Int {
         return abs(other.x - this.x) + abs(other.y - this.y)
     }
 }
 
 fun Array<PointL>.pointInPolygon(point: PointL): Boolean {
+    val eps = 0.000001
+    var crossings = 0
+
+    repeat(this.size) {
+        val minX = min(this[it].x, this[(it + 1) % this.size].x)
+        val maxX = max(this[it].x, this[(it + 1) % this.size].x)
+
+        if (point.x in minX + 1..maxX) {
+            val dx = (this[(it + 1) % this.size].x - this[it].x).toFloat()
+            val dy = (this[(it + 1) % this.size].y - this[it].y).toFloat()
+
+            val k = if (abs(dx) < eps) {
+                (9999999999).toFloat()
+            } else {
+                dy / dx
+            }
+
+            val m = this[it].y - k * this[it].x
+            val y2 = k * point.x + m
+
+            if (point.y <= y2) {
+                crossings += 1
+            }
+        }
+    }
+
+    return crossings % 2 == 1
+}
+
+fun List<Point>.pointInPolygon(point: Point): Boolean {
     val eps = 0.000001
     var crossings = 0
 

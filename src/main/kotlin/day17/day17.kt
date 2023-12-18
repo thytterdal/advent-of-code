@@ -43,7 +43,7 @@ private fun secondStar(city: List<List<Int>>, start: CityBlock, end: Point) {
         startPosition = start,
         neighbors = { cityBlock ->
             city.neighbors(cityBlock) { direction ->
-                when(cityBlock.straightBlocks) {
+                when (cityBlock.straightBlocks) {
                     in 0..3 -> direction == cityBlock.direction
                     in 4..10 -> true
                     else -> false

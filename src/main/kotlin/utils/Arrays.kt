@@ -21,3 +21,7 @@ fun <T> List<List<T>>.positionIsValid(point: Point): Boolean {
 infix operator fun <T> List<List<T>>.get(point: Point): T {
     return this[point.y][point.x]
 }
+
+infix operator fun List<String>.get(point: Point): Char {
+    return this[point.y][point.x]
+}

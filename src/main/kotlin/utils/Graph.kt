@@ -6,10 +6,24 @@ object Graph {
     class Vertex<T>(
         val position: T,
         val weight: Int,
-        val parent: Vertex<T>? = null
+        val parent: Vertex<T>? = null,
+        val heuristic: Int? = null
     ) : Comparable<Vertex<T>> {
 
-        override fun compareTo(other: Vertex<T>) = weight.compareTo(other.weight)
+        private val f: Int
+            get() = heuristic?.let { weight + it } ?: weight
+
+        override fun compareTo(other: Vertex<T>): Int =
+            if (heuristic != null && other.heuristic != null) {
+                when {
+                    f - other.f > 0 -> 1
+                    f - other.f < 0 -> -1
+                    else -> (heuristic - other.heuristic).let { if (it < 0) -1 else 1 }
+                }
+            } else {
+                weight.compareTo(other.weight)
+            }
+
 
         fun path(): List<Vertex<T>> {
             val returnPath = mutableListOf(this)
@@ -31,6 +45,14 @@ object Graph {
     ) {
         fun toVertex(parent: Vertex<T>): Vertex<T> =
             Vertex(position = vertexPosition, parent.weight + weight, parent)
+
+        fun toVertex(parent: Vertex<T>, heuristic: (T) -> Int): Vertex<T> =
+            Vertex(
+                position = vertexPosition,
+                weight = parent.weight + weight,
+                parent = parent,
+                heuristic = heuristic(vertexPosition)
+            )
 
     }
 
@@ -71,6 +93,36 @@ object Graph {
             }
         }
 
+        return emptyList()
+    }
+
+    fun <T> aStar(
+        startPosition: T,
+        neighbors: (T) -> List<Edge<T>>,
+        endCondition: (T) -> Boolean,
+        heuristic: (T) -> Int
+    ): List<Vertex<T>> {
+        val startVertex = Vertex(startPosition, 0, heuristic = heuristic(startPosition))
+
+        val queue = PriorityQueue<Vertex<T>>()
+        queue.add(startVertex)
+
+        val visited = mutableSetOf<T>()
+
+        while (queue.isNotEmpty()) {
+            val current = queue.poll()
+            if(current.position !in visited) {
+                visited.add(current.position)
+                if (endCondition(current.position)) {
+                    return current.path()
+                }
+                for (neighbor in neighbors(current.position)) {
+                    if (!visited.contains(neighbor.vertexPosition)) {
+                        queue.add(neighbor.toVertex(current, heuristic))
+                    }
+                }
+            }
+        }
         return emptyList()
     }
 }
