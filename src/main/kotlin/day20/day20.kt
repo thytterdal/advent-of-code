@@ -1,5 +1,6 @@
 package day20
 
+import utils.leastCommonMultiple
 import utils.readInput
 
 fun main() {
@@ -19,8 +20,6 @@ private fun firstStar(lines: List<String>) {
     }
     val low = modules.sumOf { it.lowCount }
     val high = modules.sumOf { it.highCount }
-    println("low: $low")
-    println("high: $high")
 
     val sum = low * high
 
@@ -28,7 +27,19 @@ private fun firstStar(lines: List<String>) {
 }
 
 private fun secondStar(lines: List<String>) {
-    val sum = 0
+    val modules = lines.parseModules()
+
+    val broadcaster = modules.first { it is Module.Broadcaster } as Module.Broadcaster
+
+    val conjunctionBeforeRx =
+        modules.first { it.successors.contains(Module.Output) && it is Module.Conjunction } as Module.Conjunction
+
+    while (!conjunctionBeforeRx.allCyclesFound) {
+        conjunctionBeforeRx.cycle++
+        broadcaster.simulate()
+    }
+
+    val sum = conjunctionBeforeRx.highCycles.values.reduce(::leastCommonMultiple)
 
     println("Second ⭐: $sum")
 }
@@ -99,8 +110,6 @@ private sealed class Module {
             private set
 
         override operator fun invoke(sender: String, pulse: Pulse): Pulse? {
-            //println("$sender -$pulse-> FlipFlop $id")
-
             incrementCount(pulse)
             return if (pulse == Pulse.LOW) {
                 currentState = !currentState
@@ -115,16 +124,22 @@ private sealed class Module {
         override val id: String
     ) : Module() {
         private val predecessors = mutableMapOf<String, Pulse>()
+        val highCycles = mutableMapOf<String, Long>()
+        var cycle = 0L
 
         fun registerPredecessor(predecessorId: String) {
             predecessors[predecessorId] = Pulse.LOW
         }
 
-        override fun invoke(sender: String, pulse: Pulse): Pulse {
-            //println("$sender -$pulse-> Conjunction $id")
+        val allCyclesFound: Boolean
+            get() = predecessors.size == highCycles.size
 
+        override fun invoke(sender: String, pulse: Pulse): Pulse {
             incrementCount(pulse)
             predecessors[sender] = pulse
+            if (pulse == Pulse.HIGH && sender !in highCycles.keys) {
+                highCycles[sender] = cycle
+            }
 
             return if (predecessors.all { it.value == Pulse.HIGH }) Pulse.LOW else Pulse.HIGH
         }
@@ -134,8 +149,6 @@ private sealed class Module {
         override val id: String
     ) : Module() {
         override fun invoke(sender: String, pulse: Pulse): Pulse {
-            //println("$sender -$pulse-> Broadcaster $id")
-
             incrementCount(pulse)
 
             return pulse
@@ -146,8 +159,6 @@ private sealed class Module {
         override val id: String = "output"
 
         override fun invoke(sender: String, pulse: Pulse): Pulse? {
-            //println("$sender -$pulse-> Output $id")
-
             incrementCount(pulse)
 
             return null

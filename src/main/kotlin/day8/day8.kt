@@ -1,5 +1,6 @@
 package day8
 
+import utils.leastCommonMultiple
 import utils.readInput
 
 fun main() {
@@ -69,19 +70,6 @@ fun Map<String, Node>.findNumberOfSteps(
     }
 
     return steps
-}
-
-fun leastCommonMultiple(n1: Long, n2: Long): Long {
-    var gcd = 1L
-
-    var i = 1L
-    while (i <= n1 && i <= n2) {
-        if (n1 % i == 0L && n2 % i == 0L)
-            gcd = i
-        ++i
-    }
-
-    return n1 * n2 / gcd
 }
 
 data class Node(
