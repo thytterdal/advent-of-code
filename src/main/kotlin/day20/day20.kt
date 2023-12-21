@@ -3,7 +3,7 @@ package day20
 import utils.readInput
 
 fun main() {
-    val lines = readInput("day20/test_input")
+    val lines = readInput("day20/input")
 
     firstStar(lines)
     secondStar(lines)
@@ -12,17 +12,17 @@ fun main() {
 private fun firstStar(lines: List<String>) {
     val modules = lines.parseModules()
 
-    val broadcaster = modules.first { it is Module.Broadcaster }
-    val output = modules.first { it is Module.Output } as Module.Output
+    val broadcaster = modules.first { it is Module.Broadcaster } as Module.Broadcaster
 
-    //repeat(1000) {
-    broadcaster("button", Pulse.LOW)
-    //}
-    val result = output.reportAndClear()
-    println("low: ${result.low}")
-    println("high: ${result.high}")
+    repeat(1000) {
+        broadcaster.simulate()
+    }
+    val low = modules.sumOf { it.lowCount }
+    val high = modules.sumOf { it.highCount }
+    println("low: $low")
+    println("high: $high")
 
-    val sum = 0
+    val sum = low * high
 
     println("First  ⭐: $sum")
 }
@@ -31,6 +31,18 @@ private fun secondStar(lines: List<String>) {
     val sum = 0
 
     println("Second ⭐: $sum")
+}
+
+private fun Module.Broadcaster.simulate() {
+    val queue = mutableListOf(Triple("button", listOf<Module>(this), Pulse.LOW))
+    while (queue.isNotEmpty()) {
+        val (source, destinations, pulse) = queue.removeFirst()
+        for (destination in destinations) {
+            destination(sender = source, pulse = pulse)?.let { output ->
+                queue.add(Triple(destination.id, destination.successors, output))
+            }
+        }
+    }
 }
 
 private fun List<String>.parseModules(): List<Module> {
@@ -50,12 +62,12 @@ private fun List<String>.parseModules(): List<Module> {
     modules.forEach { module ->
         val successors = successorMap[module.id] ?: emptyList()
         successors.forEach { successorId ->
-            val successor =
-                modules.firstOrNull { it.id == successorId } ?: throw Exception("no match found for $successorId")
+            val successor = modules.firstOrNull { it.id == successorId } ?: Module.Output
             module.registerSuccessor(successor)
             if (successor is Module.Conjunction) {
                 successor.registerPredecessor(module.id)
             }
+
         }
     }
 
@@ -63,15 +75,21 @@ private fun List<String>.parseModules(): List<Module> {
 }
 
 private sealed class Module {
-
-    protected val successors: MutableList<Module> = mutableListOf()
+    var lowCount: Long = 0L
+    var highCount: Long = 0L
+    private val _successors: MutableList<Module> = mutableListOf()
+    val successors: List<Module> = _successors
     abstract val id: String
 
-    abstract operator fun invoke(sender: String, pulse: Pulse)
-    abstract operator fun invoke()
+    abstract operator fun invoke(sender: String, pulse: Pulse): Pulse?
+
+    protected fun incrementCount(pulse: Pulse) = when (pulse) {
+        Pulse.HIGH -> highCount++
+        Pulse.LOW -> lowCount++
+    }
 
     fun registerSuccessor(module: Module) {
-        successors.add(module)
+        _successors.add(module)
     }
 
     data class FlipFlop(
@@ -80,18 +98,15 @@ private sealed class Module {
         var currentState: Boolean = false
             private set
 
-        override operator fun invoke(sender: String, pulse: Pulse) {
-            println("$sender -$pulse-> FlipFlop $id")
-            when (pulse) {
-                Pulse.HIGH -> Unit
-                Pulse.LOW -> currentState = !currentState
-            }
-        }
+        override operator fun invoke(sender: String, pulse: Pulse): Pulse? {
+            //println("$sender -$pulse-> FlipFlop $id")
 
-        override fun invoke() {
-            if (currentState) {
-                successors.forEach { it(id, Pulse.HIGH) }
-                successors.forEach { it() }
+            incrementCount(pulse)
+            return if (pulse == Pulse.LOW) {
+                currentState = !currentState
+                if (currentState) Pulse.HIGH else Pulse.LOW
+            } else {
+                null
             }
         }
     }
@@ -105,57 +120,41 @@ private sealed class Module {
             predecessors[predecessorId] = Pulse.LOW
         }
 
-        override fun invoke(sender: String, pulse: Pulse) {
-            predecessors[sender] = pulse
-            println("$sender -$pulse-> Conjunction $id")
-        }
+        override fun invoke(sender: String, pulse: Pulse): Pulse {
+            //println("$sender -$pulse-> Conjunction $id")
 
-        override fun invoke() {
-            val pulseToSend = if (predecessors.values.all { it == Pulse.HIGH }) Pulse.LOW else Pulse.HIGH
-            successors.forEach { it(id, pulseToSend) }
-            successors.forEach { it() }
+            incrementCount(pulse)
+            predecessors[sender] = pulse
+
+            return if (predecessors.all { it.value == Pulse.HIGH }) Pulse.LOW else Pulse.HIGH
         }
     }
 
     data class Broadcaster(
         override val id: String
     ) : Module() {
-        override fun invoke(sender: String, pulse: Pulse) {
-            println("$sender -$pulse-> Broadcaster $id")
-            successors.forEach { it(id, pulse) }
-            successors.forEach { it() }
+        override fun invoke(sender: String, pulse: Pulse): Pulse {
+            //println("$sender -$pulse-> Broadcaster $id")
+
+            incrementCount(pulse)
+
+            return pulse
         }
-        override fun invoke() = Unit
     }
 
     data object Output : Module() {
         override val id: String = "output"
-        private var lowCount: Long = 0L
-        private var highCount: Long = 0L
 
-        fun reportAndClear(): PulseCount {
-            val pulseCount = PulseCount(low = lowCount, high = highCount)
-            lowCount = 0L
-            highCount = 0L
-            return pulseCount
-        }
+        override fun invoke(sender: String, pulse: Pulse): Pulse? {
+            //println("$sender -$pulse-> Output $id")
 
-        override fun invoke(sender: String, pulse: Pulse) {
-            println("$sender -$pulse-> Output $id")
-            when (pulse) {
-                Pulse.HIGH -> highCount++
-                Pulse.LOW -> lowCount++
-            }
+            incrementCount(pulse)
+
+            return null
         }
-        override fun invoke() = Unit
     }
 }
 
 private enum class Pulse {
     HIGH, LOW
 }
-
-private data class PulseCount(
-    val low: Long,
-    val high: Long
-)

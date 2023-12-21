@@ -17,7 +17,7 @@ data class PointL(
 
     fun move(times: Long, direction: Direction): PointL {
         return PointL(
-            x = (direction.x * times)+ this.x,
+            x = (direction.x * times) + this.x,
             y = (direction.y * times) + this.y
         )
     }
@@ -40,7 +40,7 @@ data class Point(
 
     fun move(times: Int, direction: Direction): Point {
         return Point(
-            x = (direction.x * times)+ this.x,
+            x = (direction.x * times) + this.x,
             y = (direction.y * times) + this.y
         )
     }
@@ -48,6 +48,9 @@ data class Point(
     fun distanceTo(other: Point): Int {
         return abs(other.x - this.x) + abs(other.y - this.y)
     }
+
+    fun neighbors() = listOf(Direction.Up, Direction.Right, Direction.Down, Direction.Left).map { this + it }
+
 }
 
 fun Array<PointL>.pointInPolygon(point: PointL): Boolean {
@@ -135,7 +138,7 @@ sealed interface Direction {
     }
 
     fun isOpposite(other: Direction): Boolean {
-        return when(other) {
+        return when (other) {
             Down -> this == Up
             Left -> this == Right
             Right -> this == Left
