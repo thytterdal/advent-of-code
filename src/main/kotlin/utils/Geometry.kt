@@ -53,6 +53,12 @@ data class Point(
 
 }
 
+data class Point3D(
+    val x: Int,
+    val y: Int,
+    val z: Int
+)
+
 fun Array<PointL>.pointInPolygon(point: PointL): Boolean {
     val eps = 0.000001
     var crossings = 0
