@@ -14,10 +14,11 @@ fun List<String>.splitOnEmpty(): List<List<String>> {
 fun List<String>.toIntMatrix(): List<List<Int>> =
     this.map { line -> line.toCharArray().map { char -> char.digitToInt() } }
 
-fun List<String>.toGrid(): List<List<Char>> =
-    this.map { line -> line.toCharArray().toList() }
-
 fun <T> List<List<T>>.positionIsValid(point: Point): Boolean {
+    return point.x in this.first().indices && point.y in this.indices
+}
+
+fun List<String>.positionInStringIsValid(point: Point): Boolean {
     return point.x in this.first().indices && point.y in this.indices
 }
 
