@@ -1,5 +1,6 @@
 package utils
 
+import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -57,6 +58,11 @@ data class Point3D(
     val x: Int,
     val y: Int,
     val z: Int
+)
+
+data class PointD(
+    val x: Double,
+    val y: Double
 )
 
 fun Array<PointL>.pointInPolygon(point: PointL): Boolean {

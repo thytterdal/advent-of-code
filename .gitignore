@@ -44,3 +44,4 @@ bin/
 ### Advent of code input ###
 input.txt
 test_input.txt
+venv
