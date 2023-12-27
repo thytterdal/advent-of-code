@@ -29,9 +29,9 @@ sols = solve(
     ],
     [x, y, z, vx, vy, vz], dict=True)
 
-# select solution with integer speed components
 for s in sols:
     if s[vx] == int(s[vx]) and s[vy] == int(s[vy]) and s[vz] == int(s[vz]):
         print(s)
         break
+
 print(s[x] + s[y] + s[z])
