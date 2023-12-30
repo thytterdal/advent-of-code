@@ -45,3 +45,5 @@ bin/
 input.txt
 test_input.txt
 venv
+
+src/main/resources/input/**/*.txt
