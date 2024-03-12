@@ -10,7 +10,11 @@ abstract class Challenge(private val year: Int, private val day: Int) {
     fun run() {
         val input = Path("src/main/resources/input/$year/$day.txt").readLines()
 
-        println("Silver  ⭐: ${silverStar(input)}")
-        println("Gold    ⭐: ${goldStar(input)}")
+        try {
+            println("Silver  ⭐: ${silverStar(input)}")
+            println("Gold    ⭐: ${goldStar(input)}")
+        } catch (e: NotImplementedError) {
+            println("Not implemented")
+        }
     }
 }
