@@ -29,3 +29,14 @@ infix operator fun <T> List<List<T>>.get(point: Point): T {
 infix operator fun List<String>.get(point: Point): Char {
     return this[point.y][point.x]
 }
+
+fun <T> List<T>.permutations(): List<List<T>> {
+    if (isEmpty()) return emptyList()
+    if (size == 1) return listOf(this)
+
+    return drop(1).permutations().fold(mutableListOf()) { acc, perm ->
+        (0..perm.size).mapTo(acc) { i ->
+            perm.subList(0, i) + this@permutations.first() + perm.subList(i, perm.size)
+        }
+    }
+}
