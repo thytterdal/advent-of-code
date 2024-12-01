@@ -18,13 +18,12 @@ private val aoc2024day1 = object : Challenge(year = 2024, day = 1) {
     override fun goldStar(lines: List<String>): Long {
         val (left, right) = lines.splitInput()
 
-        val accumulatedDiff = left.fold(0L) { acc, l ->
+        val similarityScore = left.fold(0L) { acc, l ->
             val occurences = right.count { it == l }
-            val similarityScore = l * occurences
-            acc + similarityScore
+            acc + l * occurences
         }
 
-        return accumulatedDiff
+        return similarityScore
     }
 }
 
