@@ -15,15 +15,15 @@ val aoc2024day3 = object : Challenge(year = 2024, day = 3) {
         val allLines = lines.joinToString("")
 
         var enabled = true
-        return regex.findAll(allLines).fold(0L) {acc, matchResult ->
+        return regex.findAll(allLines).fold(0L) { acc, matchResult ->
             val match = matchResult.value
-            if(match == "don't()") {
+            if (match == "don't()") {
                 enabled = false
                 acc
             } else if (match == "do()") {
                 enabled = true
                 acc
-            } else if(enabled) {
+            } else if (enabled) {
                 acc + match.getMultiplied()
             } else {
                 acc
