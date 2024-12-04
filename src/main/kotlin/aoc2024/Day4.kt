@@ -23,14 +23,14 @@ val aoc2024day4 = object : Challenge(year = 2024, day = 4) {
 
         return grid.foldIndexed(0L) { y, outerAcc, line ->
             outerAcc + line.foldIndexed(0L) { x, acc, point ->
-                if(point == 'X') {
+                if (point == 'X') {
                     acc + directions.count { dirs ->
                         List(4) { idx ->
                             var pos = Point(x, y)
                             dirs.forEach { dir ->
                                 pos = pos.move(idx, dir)
                             }
-                            if(positionIsValid(pos, grid)) {
+                            if (positionIsValid(pos, grid)) {
                                 grid[pos]
                             } else {
                                 ""
@@ -56,26 +56,26 @@ val aoc2024day4 = object : Challenge(year = 2024, day = 4) {
         )
 
         val valid = listOf(
-            "SMMS","MSSM", "SMSM", "MSMS"
+            "SMMS", "MSSM", "SMSM", "MSMS"
         )
 
         return grid.foldIndexed(0L) { y, outerAcc, line ->
             outerAcc + line.foldIndexed(0L) { x, acc, point ->
-                if(point == 'A') {
+                if (point == 'A') {
                     val cross = directions.map { dirs ->
                         var pos = Point(x, y)
                         dirs.forEach { dir ->
                             pos = pos.move(1, dir)
                         }
-                        if(positionIsValid(pos, grid)) {
+                        if (positionIsValid(pos, grid)) {
                             grid[pos]
                         } else {
                             ""
                         }
                     }.joinToString("")
 
-                    if(cross in valid) {
-                        acc +1
+                    if (cross in valid) {
+                        acc + 1
                     } else {
                         acc
                     }
