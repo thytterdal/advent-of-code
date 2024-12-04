@@ -24,17 +24,11 @@ val aoc2024day4 = object : Challenge(year = 2024, day = 4) {
 
         val valid = listOf("MAS", "SAM")
 
-        return grid.keys.fold(0L) { acc, point ->
-            acc + if (
-                directions.all { dirs ->
-                    dirs.map { dir -> grid[point.move(1, dir)] }.joinToString("") in valid
-                }
-            ) {
-                1
-            } else {
-                0
+        return grid.keys.count { point ->
+            directions.all { dirs ->
+                dirs.map { dir -> grid[point.move(1, dir)] }.joinToString("") in valid
             }
-        }
+        }.toLong()
     }
 }
 
