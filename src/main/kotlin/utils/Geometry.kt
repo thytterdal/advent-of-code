@@ -134,6 +134,16 @@ sealed interface Direction {
         override val y = -1
     }
 
+    data object UpLeft : Direction {
+        override val x = -1
+        override val y = -1
+    }
+
+    data object UpRight : Direction {
+        override val x = 1
+        override val y = -1
+    }
+
     data object Left : Direction {
         override val x = -1
         override val y = 0
@@ -149,12 +159,43 @@ sealed interface Direction {
         override val y = 1
     }
 
+    data object DownLeft : Direction {
+        override val x = -1
+        override val y = 1
+    }
+
+    data object DownRight : Direction {
+        override val x = 1
+        override val y = 1
+    }
+
+    data object None : Direction {
+        override val x = 0
+        override val y = 0
+    }
+
     fun isOpposite(other: Direction): Boolean {
         return when (other) {
             Down -> this == Up
             Left -> this == Right
             Right -> this == Left
             Up -> this == Down
+            DownLeft -> this == UpRight
+            DownRight -> this == UpLeft
+            UpLeft -> this == DownRight
+            UpRight -> this == DownLeft
+            None -> false
         }
     }
 }
+
+val AllDirections = listOf(
+    Direction.Up,
+    Direction.UpLeft,
+    Direction.UpRight,
+    Direction.Left,
+    Direction.Right,
+    Direction.Down,
+    Direction.DownLeft,
+    Direction.DownRight
+)

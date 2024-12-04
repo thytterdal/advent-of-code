@@ -11,6 +11,14 @@ fun List<String>.splitOnEmpty(): List<List<String>> {
         .map { it.split("\n") }
 }
 
+fun List<String>.toGrid(): Map<Point, Char> = buildMap {
+    this@toGrid.forEachIndexed { y, line ->
+        line.forEachIndexed {x, char ->
+            put(Point(x, y), char)
+        }
+    }
+}
+
 fun List<String>.toIntMatrix(): List<List<Int>> =
     this.map { line -> line.toCharArray().map { char -> char.digitToInt() } }
 
