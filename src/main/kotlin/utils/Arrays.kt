@@ -13,8 +13,32 @@ fun List<String>.splitOnEmpty(): List<List<String>> {
 
 fun List<String>.toGrid(): Map<Point, Char> = buildMap {
     this@toGrid.forEachIndexed { y, line ->
-        line.forEachIndexed {x, char ->
+        line.forEachIndexed { x, char ->
             put(Point(x, y), char)
+        }
+    }
+}
+
+fun <T> List<String>.toGrid(transform: (Char) -> T): Map<Point, T> = buildMap {
+    this@toGrid.forEachIndexed { y, line ->
+        line.forEachIndexed { x, char ->
+            put(Point(x, y), transform(char))
+        }
+    }
+}
+
+fun List<String>.toLongGrid(): Map<PointL, Char> = buildMap {
+    this@toLongGrid.forEachIndexed { y, line ->
+        line.forEachIndexed { x, char ->
+            put(PointL(x.toLong(), y.toLong()), char)
+        }
+    }
+}
+
+fun <T> List<String>.toLongGrid(transform: (Char) -> T): Map<PointL, T> = buildMap {
+    this@toLongGrid.forEachIndexed { y, line ->
+        line.forEachIndexed { x, char ->
+            put(PointL(x.toLong(), y.toLong()), transform(char))
         }
     }
 }
