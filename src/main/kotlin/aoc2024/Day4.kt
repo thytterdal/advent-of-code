@@ -25,9 +25,8 @@ val aoc2024day4 = object : Challenge(year = 2024, day = 4) {
             outerAcc + line.foldIndexed(0L) { x, acc, point ->
                 if(point == 'X') {
                     acc + directions.count { dirs ->
-                        val start = Point(x, y)
                         List(4) { idx ->
-                            var pos = start
+                            var pos = Point(x, y)
                             dirs.forEach { dir ->
                                 pos = pos.move(idx, dir)
                             }
