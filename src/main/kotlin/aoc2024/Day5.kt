@@ -7,26 +7,25 @@ val aoc2024day5 = object : Challenge(year = 2024, day = 5) {
     override fun silverStar(lines: List<String>): Long {
         val (rules, updates) = lines.splitRulesAndUpdates()
 
-        return updates.filter { update ->
-            update.windowed(2).all { (a, b) -> a to b in rules }
-        }.sumOf { it[it.size / 2] }
+        return updates
+            .filter { update -> update.zipWithNext().all { it in rules } }
+            .sumOf { it[it.size / 2] }
     }
 
     override fun goldStar(lines: List<String>): Long {
         val (rules, updates) = lines.splitRulesAndUpdates()
 
-        return updates.filter { update ->
-            !update.windowed(2).all { (a, b) -> a to b in rules }
-        }.map { update ->
-            val filteredRules = rules.filter { rule -> rule.first in update && rule.second in update }
-            update.sortedWith { p0, p1 ->
-                when {
-                    p0 == p1 -> 0
-                    p0 to p1 in filteredRules -> -1
-                    else -> 1
+        return updates
+            .filter { update -> !update.zipWithNext().all { it in rules } }
+            .map { update ->
+                update.sortedWith { p0, p1 ->
+                    when {
+                        p0 == p1 -> 0
+                        p0 to p1 in rules -> -1
+                        else -> 1
+                    }
                 }
-            }
-        }.sumOf { it[it.size / 2] }
+            }.sumOf { it[it.size / 2] }
     }
 }
 
