@@ -1,7 +1,7 @@
 package aoc2023.day13
 
 import utils.readInput
-import utils.splitOnEmpty
+import utils.splitOnEmptyLine
 import utils.transpose
 
 typealias pattern = List<List<Char>>
@@ -26,7 +26,7 @@ private fun secondStar(lines: List<String>) {
 }
 
 private fun List<String>.findSum(foundCondition: (pattern, pattern, Int) -> Boolean): Long {
-    val sum = this.splitOnEmpty().sumOf { line ->
+    val sum = this.splitOnEmptyLine().sumOf { line ->
         val splitLines = line.map { it.toList() }
 
         val horizontal = splitLines.transpose().findReflection(foundCondition) * 100

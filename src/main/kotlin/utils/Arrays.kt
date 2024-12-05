@@ -4,7 +4,7 @@ inline fun <reified T> List<List<T>>.transpose(): List<List<T>> {
     return List(this[0].size) { i -> List(this.size) { j -> this[j][i] } }
 }
 
-fun List<String>.splitOnEmpty(): List<List<String>> {
+fun List<String>.splitOnEmptyLine(): List<List<String>> {
     return this
         .joinToString("\n")
         .split("\n\n")

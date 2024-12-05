@@ -1,7 +1,7 @@
 package aoc2023.day19
 
 import utils.readInput
-import utils.splitOnEmpty
+import utils.splitOnEmptyLine
 import kotlin.math.max
 import kotlin.math.min
 
@@ -105,7 +105,7 @@ private fun Map<String, List<WorkFlowStep>>.checkCondition(stepName: String, par
 
 
 private fun List<String>.parseInput(): Pair<List<Part>, Map<String, List<WorkFlowStep>>> {
-    val (workFlowInstructions, partDescriptions) = this.splitOnEmpty()
+    val (workFlowInstructions, partDescriptions) = this.splitOnEmptyLine()
 
     val parts = partDescriptions.map { part ->
         part
