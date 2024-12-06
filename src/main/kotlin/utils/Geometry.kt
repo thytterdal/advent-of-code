@@ -189,6 +189,18 @@ sealed interface Direction {
     }
 }
 
+fun Direction.turn90degrees() = when (this) {
+    Direction.Down -> Direction.Left
+    Direction.DownLeft -> Direction.UpLeft
+    Direction.DownRight -> Direction.DownLeft
+    Direction.Left -> Direction.Up
+    Direction.None -> Direction.None
+    Direction.Right -> Direction.Down
+    Direction.Up -> Direction.Right
+    Direction.UpLeft -> Direction.UpRight
+    Direction.UpRight -> Direction.DownRight
+}
+
 val AllDirections = listOf(
     Direction.Up,
     Direction.UpLeft,
