@@ -3,6 +3,7 @@ package aoc2024
 import common.Challenge
 
 val aoc2024day7 = object : Challenge(year = 2024, day = 7) {
+
     override fun silverStar(lines: List<String>): Long {
         val equations = lines.map { line ->
             line.substringBefore(":").toLong() to line.substringAfter(": ").split(" ").map { num -> num.toLong() }
@@ -27,7 +28,7 @@ val aoc2024day7 = object : Challenge(year = 2024, day = 7) {
 fun List<Long>.solve(sum: Long): List<Long> {
     if (isEmpty()) return listOf(sum)
     return drop(1).solve(sum + first()) +
-           drop(1).solve(sum * first())
+            drop(1).solve(sum * first())
 }
 
 fun List<Long>.solveWithConcatenation(sum: Long): List<Long> {
