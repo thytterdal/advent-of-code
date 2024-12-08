@@ -1,6 +1,7 @@
 package aoc2024
 
 import common.Challenge
+import utils.Distance
 import utils.Point
 import utils.allPairs
 import utils.toGrid
@@ -29,24 +30,20 @@ val aoc2024day8 = object : Challenge(year = 2024, day = 8) {
 
         antennaPairs.forEach { (firstAntenna, secondAntenna) ->
             val distance = firstAntenna - secondAntenna
-            val negatedDistance = distance.negate()
 
-            var firstAntinode = firstAntenna
-            while (firstAntinode in grid) {
-                antinodes.add(firstAntinode)
-                firstAntinode = firstAntinode.move(negatedDistance)
-            }
-
-            var secondAntinode = secondAntenna
-            while (secondAntinode in grid) {
-                antinodes.add(secondAntinode)
-                secondAntinode = secondAntinode.move(distance)
-            }
+            antinodes.addAll(getAntinodeSequence(firstAntenna, distance.negate()).takeWhile { it in grid })
+            antinodes.addAll(getAntinodeSequence(secondAntenna, distance).takeWhile { it in grid })
         }
 
         return antinodes.count().toLong()
     }
 
+}
+
+fun getAntinodeSequence(startPoint: Point, distance: Distance) = sequence {
+    repeat(Int.MAX_VALUE) { index ->
+        yield(startPoint.move(index, distance))
+    }
 }
 
 private fun List<String>.getGridAndAntennaPairs(): Pair<Map<Point, Char>, List<Pair<Point, Point>>> {
