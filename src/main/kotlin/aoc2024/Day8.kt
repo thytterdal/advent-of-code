@@ -31,8 +31,14 @@ val aoc2024day8 = object : Challenge(year = 2024, day = 8) {
         antennaPairs.forEach { (firstAntenna, secondAntenna) ->
             val distance = firstAntenna - secondAntenna
 
-            antinodes.addAll(getAntinodeSequence(firstAntenna, distance.negate()).takeWhile { it in grid })
-            antinodes.addAll(getAntinodeSequence(secondAntenna, distance).takeWhile { it in grid })
+            antinodes.addAll(
+                getAntinodeSequence(firstAntenna, distance.negate())
+                    .takeWhile { it in grid }
+            )
+            antinodes.addAll(
+                getAntinodeSequence(secondAntenna, distance)
+                    .takeWhile { it in grid }
+            )
         }
 
         return antinodes.count().toLong()
