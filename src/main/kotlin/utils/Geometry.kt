@@ -46,12 +46,32 @@ data class Point(
         )
     }
 
+    fun move(distance: Distance): Point {
+        return Point(
+            x = distance.x + x,
+            y = distance.y + y
+        )
+    }
+
+    fun move(times: Int, distance: Distance): Point {
+        return Point(
+            x = (distance.x * times) + x,
+            y = (distance.y * times) + y
+        )
+    }
+
     fun distanceTo(other: Point): Int {
         return abs(other.x - this.x) + abs(other.y - this.y)
     }
 
     fun neighbors() = listOf(Direction.Up, Direction.Right, Direction.Down, Direction.Left).map { this + it }
 
+    infix operator fun minus(other: Point): Distance {
+        return Distance(
+            x = other.x - x,
+            y = other.y - y
+        )
+    }
 }
 
 data class Point3D(
@@ -123,6 +143,16 @@ fun List<Point>.pointInPolygon(point: Point): Boolean {
     }
 
     return crossings % 2 == 1
+}
+
+data class Distance(
+    val x: Int,
+    val y: Int
+) {
+    fun negate() = Distance(
+        x = -x,
+        y = -y
+    )
 }
 
 sealed interface Direction {

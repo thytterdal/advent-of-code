@@ -72,3 +72,9 @@ fun <T> List<T>.permutations(): List<List<T>> {
         }
     }
 }
+
+fun <T> List<T>.allPairs(): List<Pair<T, T>> = buildList {
+    for (i in 0 until this@allPairs.size - 1)
+        for (j in i + 1 until this@allPairs.size)
+            add(this@allPairs[i] to this@allPairs[j])
+}
