@@ -10,12 +10,12 @@ val aoc2024day8 = object : Challenge(year = 2024, day = 8) {
         val antinodes = mutableSetOf<Point>()
         val (grid, antennaPairs) = lines.getGridAndAntennaPairs()
 
-        antennaPairs.forEach { (first, second) ->
-            val distance = first - second
+        antennaPairs.forEach { (firstAntenna, secondAntenna) ->
+            val distance = firstAntenna - secondAntenna
             antinodes.addAll(
                 listOf(
-                    second.move(distance),
-                    first.move(distance.negate())
+                    secondAntenna.move(distance),
+                    firstAntenna.move(distance.negate())
                 ).filter { it in grid }
             )
         }
