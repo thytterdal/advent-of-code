@@ -4,7 +4,7 @@ import common.Challenge
 import utils.Distance
 import utils.Point
 
-val aoc2024day14 = object : Challenge(year = 2024, day = 14) {
+private val aoc2024day14 = object : Challenge(year = 2024, day = 14) {
     val bounds = 101 to 103
 
     override fun silverStar(lines: List<String>): Long {
