@@ -3,6 +3,7 @@ package aoc2024
 import common.Challenge
 import utils.Distance
 import utils.Point
+import utils.numbers
 
 private val aoc2024day14 = object : Challenge(year = 2024, day = 14) {
     val bounds = 101 to 103
@@ -58,10 +59,10 @@ private fun List<Robot>.printRobots(bounds: Pair<Int, Int>) {
 }
 
 private fun List<String>.parseRobots() = map { line ->
-    val (pos, vel) = line.split(" ").map { it.substringAfter("=").split(",").map(String::toInt) }
+    val nums = line.numbers()
     Robot(
-        pos = Point(pos[0], pos[1]),
-        velocity = Distance(vel[0], vel[1])
+        pos = Point(nums[0], nums[1]),
+        velocity = Distance(nums[2], nums[3])
     )
 }
 
