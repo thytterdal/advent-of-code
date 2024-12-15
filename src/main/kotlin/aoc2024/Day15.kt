@@ -36,11 +36,11 @@ private val aoc2024day15 = object : Challenge(year = 2024, day = 15) {
     }
 }
 
-fun List<String>.scaleMap() = map { line ->
+private fun List<String>.scaleMap() = map { line ->
     line.replace(".", "..").replace("@", "@.").replace("#", "##").replace("O", "[]")
 }
 
-fun MutableMap<Point, Char>.moveRobotScaled(position: Point, direction: Direction): Point {
+private fun MutableMap<Point, Char>.moveRobotScaled(position: Point, direction: Direction): Point {
     val newPosition = position.move(1, direction)
     val valueAtNewPosition = this[newPosition]
     if (valueAtNewPosition == '.') {
@@ -136,7 +136,7 @@ private fun Map<Point, Char>.expandInDirection(points: List<Point>, direction: D
     }
 }
 
-fun MutableMap<Point, Char>.moveRobot(position: Point, direction: Direction): Point {
+private fun MutableMap<Point, Char>.moveRobot(position: Point, direction: Direction): Point {
     val newPosition = position.move(1, direction)
     val valueAtNewPosition = this[newPosition]
     if (valueAtNewPosition == '.') {
