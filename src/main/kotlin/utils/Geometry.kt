@@ -68,7 +68,7 @@ data class Point(
 
     fun xRangeTo(end: Point, direction: Direction) = generateSequence(this) { current ->
         val next = current.move(1, direction)
-        if(next == end) {
+        if (next == end) {
             null
         } else {
             next
@@ -240,16 +240,24 @@ fun Direction.turn90degrees() = when (this) {
     Direction.UpRight -> Direction.DownRight
 }
 
-fun Direction.inverse() = when(this) {
+fun Direction.inverse() = when (this) {
     Direction.Down -> Direction.Up
-    Direction.DownLeft -> TODO()
-    Direction.DownRight -> TODO()
+    Direction.DownLeft -> Direction.UpRight
+    Direction.DownRight -> Direction.UpLeft
     Direction.Left -> Direction.Right
     Direction.None -> Direction.None
     Direction.Right -> Direction.Left
     Direction.Up -> Direction.Down
-    Direction.UpLeft -> TODO()
-    Direction.UpRight -> TODO()
+    Direction.UpLeft -> Direction.DownRight
+    Direction.UpRight -> Direction.DownLeft
+}
+
+fun Char.toDirection(): Direction = when (this) {
+    '<' -> Direction.Left
+    '>' -> Direction.Right
+    '^' -> Direction.Up
+    'v' -> Direction.Down
+    else -> throw IllegalArgumentException()
 }
 
 val AllDirections = listOf(

@@ -159,12 +159,5 @@ fun MutableMap<Point, Char>.moveRobot(position: Point, direction: Direction): Po
     return position
 }
 
-fun Char.toDirection(): Direction = when (this) {
-    '<' -> Direction.Left
-    '>' -> Direction.Right
-    '^' -> Direction.Up
-    'v' -> Direction.Down
-    else -> throw IllegalArgumentException()
-}
 
 fun main() = aoc2024day15.run()
