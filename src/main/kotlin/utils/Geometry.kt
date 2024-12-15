@@ -66,6 +66,15 @@ data class Point(
 
     fun neighbors() = listOf(Direction.Up, Direction.Right, Direction.Down, Direction.Left).map { this + it }
 
+    fun xRangeTo(end: Point, direction: Direction) = generateSequence(this) { current ->
+        val next = current.move(1, direction)
+        if(next == end) {
+            null
+        } else {
+            next
+        }
+    }
+
     infix operator fun minus(other: Point): Distance {
         return Distance(
             x = other.x - x,
@@ -229,6 +238,18 @@ fun Direction.turn90degrees() = when (this) {
     Direction.Up -> Direction.Right
     Direction.UpLeft -> Direction.UpRight
     Direction.UpRight -> Direction.DownRight
+}
+
+fun Direction.inverse() = when(this) {
+    Direction.Down -> Direction.Up
+    Direction.DownLeft -> TODO()
+    Direction.DownRight -> TODO()
+    Direction.Left -> Direction.Right
+    Direction.None -> Direction.None
+    Direction.Right -> Direction.Left
+    Direction.Up -> Direction.Down
+    Direction.UpLeft -> TODO()
+    Direction.UpRight -> TODO()
 }
 
 val AllDirections = listOf(
