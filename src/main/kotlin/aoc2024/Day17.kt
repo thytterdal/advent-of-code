@@ -24,33 +24,32 @@ private val aoc2024day17 = object : Challenge(year = 2024, day = 17) {
         val registers = rawRegisters.map { it.substringAfter(": ").toLong() }
         val instructions = rawInstructions.first().longs()
 
-        println(instructions.size)
-
-        var test = instructions.drop(1).fold(1L) { acc, _ ->
+        var registerA = instructions.drop(1).fold(1L) { acc, _ ->
             acc shl 3
         }
 
-        println(test)
-
         while (true) {
-            val correctedOutput = findOutput(registers, instructions, test)
+            val correctedOutput = findOutput(registers, instructions, registerA)
             if (correctedOutput == instructions) {
                 break
             }
 
-            if(correctedOutput.size > instructions.size) {
+            if (correctedOutput.size > instructions.size) {
                 throw IllegalArgumentException()
             }
 
             var step = 1L
-            repeat(instructions.size - instructions.zip(correctedOutput).reversed().takeWhile { it.first == it.second }.size -1) {
+            repeat(
+                instructions.size - instructions.zip(correctedOutput).reversed()
+                    .takeWhile { it.first == it.second }.size - 1
+            ) {
                 step = step shl 3
             }
 
-            test += step
+            registerA += step
         }
 
-        return test
+        return registerA
     }
 
     fun findOutput(registers: List<Long>, instructions: List<Long>, overrideA: Long? = null): List<Long> {
