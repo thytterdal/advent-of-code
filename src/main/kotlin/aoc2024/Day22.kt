@@ -11,10 +11,8 @@ private val aoc2024day22 = object : Challenge(year = 2024, day = 22) {
 
     override fun goldStar(lines: List<String>): Long {
         val grouped = lines.map { line ->
-            val sequence = generatePrices(line.toLong())
+            generatePrices(line.toLong())
                 .take(2001)
-
-            sequence
                 .map { it % 10 }
                 .zipWithNext { a, b -> b to b - a }
                 .windowed(4) { window ->
