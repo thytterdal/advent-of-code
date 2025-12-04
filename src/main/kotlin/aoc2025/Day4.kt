@@ -14,13 +14,13 @@ private val aoc2025day4 = object : Challenge(year = 2025, day = 4) {
     override fun goldStar(lines: List<String>): Long {
         val grid = lines.toGrid().toMutableMap()
         var removed = 0L
-        var toRemove = emptyList<Point>()
 
-        do {
-            toRemove = grid.findForkliftAccessibleToiletPaperRolls()
-            removed += toRemove.size
-            toRemove.forEach(grid::remove)
-        } while (toRemove.isNotEmpty())
+        while (true) {
+            removed += grid.findForkliftAccessibleToiletPaperRolls()
+                .also { if (it.isEmpty()) break }
+                .onEach(grid::remove)
+                .size
+        }
 
         return removed
     }
