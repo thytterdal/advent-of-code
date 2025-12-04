@@ -1,6 +1,5 @@
 package utils
 
-import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -65,6 +64,8 @@ data class Point(
     }
 
     fun neighbors() = listOf(Direction.Up, Direction.Right, Direction.Down, Direction.Left).map { this + it }
+
+    fun allNeighbors() = AllDirections.map { this + it }
 
     fun xRangeTo(end: Point, direction: Direction) = generateSequence(this) { current ->
         val next = current.move(1, direction)
