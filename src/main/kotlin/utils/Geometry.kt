@@ -27,10 +27,16 @@ data class PointL(
     }
 }
 
-data class Point(
-    val x: Int,
+@JvmInline
+value class Point(val value: Long) {
+
+    constructor(x: Int, y: Int) : this((x.toLong() shl 32) or (y.toLong() and 0xFFFF_FFFFL))
+
+    val x: Int
+        get() = value.shr(32).toInt()
     val y: Int
-) {
+        get() = (value and 0xFFFF_FFFFL).toInt()
+
     infix operator fun plus(direction: Direction): Point {
         return Point(
             x = direction.x + this.x,
