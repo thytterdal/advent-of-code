@@ -88,6 +88,10 @@ value class Point(val value: Long) {
             y = other.y - y
         )
     }
+
+    override fun toString(): String {
+        return "Point(x = $x, y = $y)"
+    }
 }
 
 data class Point3D(
