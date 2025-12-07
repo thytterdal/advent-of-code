@@ -14,16 +14,15 @@ private val aoc2025day7 = object : Challenge(year = 2025, day = 7) {
         var splits = 0L
 
         repeat(lines.size - 1) {
-            beams = beams
-                .flatMapTo(mutableSetOf()) { beam ->
-                    val pos = beam + Direction.Down
-                    if (grid[pos] == '^') {
-                        splits++
-                        setOf(pos + Direction.Left, pos + Direction.Right)
-                    } else {
-                        setOf(pos)
-                    }
+            beams = beams.flatMapTo(mutableSetOf()) { beam ->
+                val pos = beam + Direction.Down
+                if (grid[pos] == '^') {
+                    splits++
+                    setOf(pos + Direction.Left, pos + Direction.Right)
+                } else {
+                    setOf(pos)
                 }
+            }
         }
 
         return splits
