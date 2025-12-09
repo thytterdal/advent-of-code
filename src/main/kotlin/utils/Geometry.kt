@@ -44,6 +44,9 @@ value class Point(val value: Long) {
         )
     }
 
+    operator fun component1(): Int = x
+    operator fun component2(): Int = y
+
     fun move(times: Int, direction: Direction): Point {
         return Point(
             x = (direction.x * times) + this.x,
